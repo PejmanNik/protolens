@@ -29,9 +29,9 @@ export function RowContent({ index, data }: RowContentProps) {
     return (
       <JsonView
         src={data}
-        collapsed={10}
-        onCollapse={({ isCollapsing }) => {
-          if (!isCollapsing) {
+        collapsed={5}
+        onCollapse={({ depth, isCollapsing }) => {
+          if (depth == 1 && !isCollapsing) {
             setIsCollapsed(false);
           }
         }}
