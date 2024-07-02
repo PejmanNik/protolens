@@ -1,8 +1,7 @@
 import { db } from "../db";
-import { resolveImports } from "./ProtoDefinition.utils";
 import { useEffect } from "react";
-import { parse } from "protobufjs";
 import { liveQuery } from "dexie";
+import { resolveImports } from "./useResolveImports.utils";
 
 export function useResolveImports() {
   useEffect(() => {
@@ -11,7 +10,11 @@ export function useResolveImports() {
         const unresolvedImports =
           items?.filter((x) => x.unresolvedImportCount > 0) ?? [];
         for (const item of unresolvedImports) {
-          const result = await resolveImports(parse(item.content), items);
+          const result = await resolveImports(
+            item.descriptor,
+            item.unresolvedImports,
+            items
+          );
 
           if (
             result.unresolvedImports.length !== item.unresolvedImports.length

@@ -72,15 +72,14 @@ export function useFileDecoder(fileId: number) {
           dataFile.messageId
         );
 
+        if (readerRef.current) return;
         readerRef.current = decodeFileStream(type, file.stream());
       }
 
       await fetchNextPage();
     };
 
-    if (!readerRef.current) {
-      load().catch(setError);
-    }
+    load().catch(setError);
   }, [fileId, fetchNextPage, setError]);
 
   return {
