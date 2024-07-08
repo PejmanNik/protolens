@@ -3,9 +3,8 @@ import { styled } from "@mui/joy";
 import { Header } from "./Header";
 import { RowLists } from "./RowLists";
 import { FileLoadingError } from "./FileLoadingError";
-import { useResetAtom } from "jotai/utils";
-import { collapsedRowsAtom } from "./state";
 import { useEffect } from "react";
+import { useResetAtoms } from "./useResetAtoms";
 
 const Container = styled("div")`
   --Icon-fontSize: 13px;
@@ -18,7 +17,7 @@ const Container = styled("div")`
 `;
 
 function FileViewer() {
-  const reset = useResetAtom(collapsedRowsAtom);
+  const reset = useResetAtoms();
   const fileId = Number.parseInt(useParams().fileId ?? "0");
 
   useEffect(() => {

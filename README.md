@@ -1,6 +1,13 @@
-# protolens
+# Protolens
 Decode and preview delimited protobuf file
 
+### Features:
+- 🖥️ Fully client-side
+- 🔗 Supports nested imports and well-known types
+- 🔍 Filter data with JSONPath
+- 🚀 Utilizes stream file API to support data files with gigabyte-length
+
+### Demo:
 ![demo](resources/demo.gif?raw=true "Demo")
 
 > [!WARNING]  

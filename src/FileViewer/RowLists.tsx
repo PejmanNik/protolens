@@ -4,17 +4,19 @@ import { notUndefined, useVirtualizer } from "@tanstack/react-virtual";
 import { RowViewer } from "./RowViewer";
 import { Box } from "@mui/joy";
 import { FileLoadingError } from "./FileLoadingError";
+import { RowListLoading } from "./RowListLoading";
 
 export interface RowListsProps {
   fileId: number;
 }
 
 export function RowLists({ fileId }: RowListsProps) {
-  const { items, hasNextPage, fetchNextPage, error } = useFileDecoder(fileId);
+  const { items, hasNextPage, fetchNextPage, error, isLoading, cancel } =
+    useFileDecoder(fileId);
 
   const parentRef = useRef<HTMLDivElement>(null);
   const virtualizer = useVirtualizer({
-    count: items.length,
+    count: isLoading ? items.length + 1 : items.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 20,
   });
@@ -27,13 +29,13 @@ export function RowLists({ fileId }: RowListsProps) {
       return;
     }
 
-    if (lastItem.index >= items.length - 10 && hasNextPage) {
+    if (lastItem.index >= items.length - 10 && hasNextPage && !isLoading) {
       fetchNextPage();
     }
-  }, [hasNextPage, fetchNextPage, items.length, virtualItems]);
+  }, [hasNextPage, fetchNextPage, items.length, virtualItems, isLoading]);
 
   const [before, after] =
-    items.length > 0
+    items.length > 0 && virtualItems.length > 0
       ? [
           notUndefined(virtualItems[0]).start -
             virtualizer.options.scrollMargin,
@@ -46,13 +48,16 @@ export function RowLists({ fileId }: RowListsProps) {
     return <FileLoadingError error={error} />;
   }
 
+  if (isLoading && items.length === 0) {
+    return <RowListLoading onCancel={cancel} />;
+  }
   return (
     <Box
       sx={{
         height: "100%",
         width: "100%",
         overflow: "auto",
-        paddingLeft: "1rem",
+        padding: "0 1rem",
       }}
       ref={parentRef}
     >
@@ -70,6 +75,7 @@ export function RowLists({ fileId }: RowListsProps) {
             ref={virtualizer.measureElement}
             index={virtualItem.index}
             data={items[virtualItem.index]}
+            isLoading={isLoading && virtualItem.index === items.length}
           />
         ))}
         <Box sx={{ height: `${after}px` }} />

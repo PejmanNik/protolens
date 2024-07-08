@@ -1,13 +1,17 @@
-import { Box, useTheme } from "@mui/joy";
+import { Box, CircularProgress, useTheme } from "@mui/joy";
 import { RowContent } from "./RowContent";
 import { Ref, forwardRef } from "react";
 
 export interface RowViewerProps {
   index: number;
   data: unknown;
+  isLoading: boolean;
 }
 
-function BaseRowViewer(props: RowViewerProps, ref: Ref<HTMLDivElement>) {
+function BaseRowViewer(
+  { isLoading, ...props }: RowViewerProps,
+  ref: Ref<HTMLDivElement>
+) {
   const theme = useTheme();
 
   return (
@@ -24,9 +28,21 @@ function BaseRowViewer(props: RowViewerProps, ref: Ref<HTMLDivElement>) {
       }}
     >
       <code style={{ minWidth: "50px", color: theme.palette.neutral[400] }}>
-        {props.index}{" "}
+        {props.index + 1}{" "}
       </code>
-      <RowContent {...props} />
+      {!isLoading && <RowContent {...props} />}
+      {isLoading && (
+        <Box
+          sx={{
+            width: "100%",
+            justifyContent: "center",
+            display: "flex",
+            gap: "1rem",
+          }}
+        >
+          <CircularProgress size="sm" /> Loading...
+        </Box>
+      )}
     </Box>
   );
 }

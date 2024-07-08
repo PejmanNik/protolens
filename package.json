@@ -25,12 +25,11 @@
     "dexie-react-hooks": "^1.1.7",
     "flat": "^6.0.1",
     "jotai": "^2.8.4",
+    "jsonpath-plus": "^9.0.0",
     "protobufjs": "^7.3.2",
     "rawproto": "^0.7.15",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-dropzone": "^14.2.3",
-    "react-json-tree": "^0.19.0",
     "react-router-dom": "^6.23.1",
     "react18-json-view": "^0.2.9-canary.1"
   },

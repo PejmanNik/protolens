@@ -36,8 +36,8 @@ function App() {
             color: "var(--Icon-color)",
             margin: "var(--Icon-margin)",
             fontSize: "var(--Icon-fontSize, 24px)",
-            width: "0.75em",
-            height: "0.75em",
+            width: "0.9em",
+            height: "0.9em",
           },
         }}
       />
