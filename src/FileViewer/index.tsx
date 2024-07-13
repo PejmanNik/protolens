@@ -1,8 +1,7 @@
 import { useParams } from "react-router-dom";
-import { styled } from "@mui/joy";
+import { Alert, styled, Typography } from "@mui/joy";
 import { Header } from "./Header";
 import { RowLists } from "./RowLists";
-import { FileLoadingError } from "./FileLoadingError";
 import { useEffect } from "react";
 import { useResetAtoms } from "./useResetAtoms";
 
@@ -25,7 +24,15 @@ function FileViewer() {
   }, [reset]);
 
   if (!fileId || isNaN(fileId) || fileId <= 0) {
-    return <FileLoadingError error="File id is missing" />;
+    return (
+      <Container>
+        <Alert color="danger">
+          <Typography level="h4" color="danger">
+            File id is not valid
+          </Typography>
+        </Alert>
+      </Container>
+    );
   }
 
   return (

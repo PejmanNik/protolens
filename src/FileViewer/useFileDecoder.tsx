@@ -16,6 +16,7 @@ import { INamespace } from "protobufjs";
 
 export function useFileDecoder(fileId: number) {
   const filter = useAtomValue(filterAtom);
+  const [reload, setReload] = useState(0);
   const [hasNextPage, setHasNextPage] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [items, setItems] = useState([] as unknown[]);
@@ -51,15 +52,26 @@ export function useFileDecoder(fileId: number) {
     }
   }, [setItems]);
 
+  const readDataFile = useCallback(async () => {
+    const dataFile = await db.dataFiles.get(fileId);
+    if (!dataFile) {
+      throw new Error("Missing data file");
+    }
+    const state = await dataFile.fileHandle.queryPermission({
+      mode: "read",
+    });
+    if (state !== "granted") {
+      await dataFile.fileHandle.requestPermission({ mode: "read" });
+    }
+
+    return dataFile;
+  }, [fileId]);
+
   useEffect(() => {
     let isUnmounted = false;
     const load = async () => {
       try {
-        const dataFile = await db.dataFiles.get(fileId);
-        if (!dataFile) {
-          throw new Error("Missing data file");
-        }
-        await dataFile.fileHandle.requestPermission({ mode: "read" });
+        const dataFile = await readDataFile();
         const file = await dataFile.fileHandle.getFile();
         const reader = file.stream().getReader();
 
@@ -75,6 +87,7 @@ export function useFileDecoder(fileId: number) {
           filter
         );
 
+        setError(null);
         setItems([]);
         cancellationToken.current = new CancellationToken();
         if (isUnmounted) {
@@ -99,7 +112,7 @@ export function useFileDecoder(fileId: number) {
         x?.terminate();
       });
     };
-  }, [filter, fileId, setError, fetchNextPage]);
+  }, [filter, fileId, setError, reload, fetchNextPage, readDataFile]);
 
   return useMemo(
     () => ({
@@ -107,10 +120,11 @@ export function useFileDecoder(fileId: number) {
       error,
       hasNextPage,
       isLoading,
-      cancel: () => cancellationToken.current.cancel(),
       fetchNextPage,
+      cancel: () => cancellationToken.current.cancel(),
+      reload: () => readDataFile().then(() => setReload((x) => x + 1)),
     }),
-    [items, error, hasNextPage, isLoading, fetchNextPage]
+    [items, error, hasNextPage, isLoading, fetchNextPage, setReload, readDataFile]
   );
 }
 

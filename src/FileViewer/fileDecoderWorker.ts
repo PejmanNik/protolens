@@ -67,7 +67,10 @@ onmessage = async (e) => {
     const evaluateFilter = (item: object, filter: string) => {
       try {
         return JSONPath({ json: item, path: filter }).length > 0;
-      } catch {
+      } catch (e) {
+        if (offset === 0) {
+          console.error(e);
+        }
         return false;
       }
     };

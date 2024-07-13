@@ -11,8 +11,15 @@ export interface RowListsProps {
 }
 
 export function RowLists({ fileId }: RowListsProps) {
-  const { items, hasNextPage, fetchNextPage, error, isLoading, cancel } =
-    useFileDecoder(fileId);
+  const {
+    items,
+    hasNextPage,
+    fetchNextPage,
+    error,
+    isLoading,
+    cancel,
+    reload,
+  } = useFileDecoder(fileId);
 
   const parentRef = useRef<HTMLDivElement>(null);
   const virtualizer = useVirtualizer({
@@ -45,7 +52,7 @@ export function RowLists({ fileId }: RowListsProps) {
       : [0, 0];
 
   if (error) {
-    return <FileLoadingError error={error} />;
+    return <FileLoadingError error={error} reload={reload} />;
   }
 
   if (isLoading && items.length === 0) {
